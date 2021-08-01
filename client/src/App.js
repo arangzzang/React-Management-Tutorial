@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import Customer from './components/Customer'
 import React, {Component} from 'react';
 import './App.css';
@@ -8,12 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { withStyles } from  '@material-ui/core/styles';
+import { withStyles,createMuiTheme } from  '@material-ui/core/styles';
 
 const styles = theme => ({
     root:{
         width:'100%',
-        marginTop:theme.spacing.unit*3,
+        marginTop:theme.spacing(3),
         overflowX:"auto"
     },
     table:{
@@ -21,37 +21,29 @@ const styles = theme => ({
     }
 })
 
-const customers =[{
-  'id':1,
-  'image':'http://placeimg.com/64/64/1',
-  'name':'홍길동',
-  'birthday':'961222',
-  'gender':'남자',
-  'job':'대학생'
-},
-{
-  'id':2,
-  'image':'http://placeimg.com/64/64/2',
-  'name':'조현',
-  'birthday':'930828',
-  'gender':'남자',
-  'job':'프로그래머'
-},
-{
-  'id':3,
-  'image':'http://placeimg.com/64/64/3',
-  'name':'조쿤',
-  'birthday':'120228',
-  'gender':'남자',
-  'job':'백수'
-}]
-
 // function App() {//왜안되갑자기
 class App extends Component {
+
+  state ={//데이터가 변경 될 수 있을때.
+    customers :""
+  }
+
+  componentDidMount(){
+    this.callApi()
+      .then(res => this.setState({customers:res}))
+      .catch(err => console.log(err))
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
+
   render(){
-    const { classes } = this.props;
+    const { classes } = this.props;//변경될수 없는 데이터를 명시적으로 props로 받음
     return(
-      <Paper classNAme={classes.root}>
+      <Paper className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
@@ -64,7 +56,8 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map(c =>{return(<Customer key = {c.id} id={c.id} img={c.image} name={c.name} birthday ={c.birthday} gender = {c.gender} job = {c.job}/>)})}
+            {this.state.customers ? this.state.customers.map(c =>{return(<Customer key={c.id}id={c.id}img={c.image}name={c.name}birthday={c.birthday}gender={c.gender}job={c.job}/>)
+            }):<TableRow><TableCell>등록된 데이터가 없습니다.</TableCell></TableRow>}
          </TableBody>
         </Table>
       </Paper>
