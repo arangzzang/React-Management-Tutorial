@@ -10,6 +10,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import CircularProgress from '@material-ui/core/CircularProgress'; 
+// eslint-disable-next-line
 import { withStyles,createMuiTheme } from  '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -90,6 +91,7 @@ class App extends Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
+                {/* <TableCell>설정</TableCell> */}
                 <TableCell>번호</TableCell>
                 <TableCell>이미지</TableCell>
                 <TableCell>이름</TableCell>
@@ -101,7 +103,7 @@ class App extends Component {
             <TableBody>
               {this.state.customers ? this.state.customers.map(c =>{//네트워크상에서 현재 state값은 비워져있기 때문에 삼항 연산자를 사용함.
                 return(
-                  <Customer key={c.id} id={c.id} img={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job}/>
+                  <Customer stateRefresh={this.stateRefresh} key={c.id} id={c.id} img={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job}/>
                   )
               }):
               <TableRow>

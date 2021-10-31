@@ -26,7 +26,7 @@ const upload = multer({dest : './upload'})
 //java로치면 해당 구문은 controller의 역할
 app.get('/api/customers',(req,res) => { // 해당 경로로 이동을 하면 하나의 메세지를 사용자에게 출력할수있도록 처리해줌.
     connection.query(
-        "SELECT * FROM CUSTOMER",
+        "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
         (err,rows,fields) => {
             res.send(rows);
         }
@@ -36,7 +36,7 @@ app.get('/api/customers',(req,res) => { // 해당 경로로 이동을 하면 하
 app.use('/image',express.static('./upload'));
 
 app.post('/api/customers',upload.single('image'), (req,res) => {
-    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)';
+    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, NOW(), 0)';
     let image = '/image/' + req.file.filename;
     let name = req.body.name;
     let birthday = req.body.birthday;
@@ -53,6 +53,16 @@ app.post('/api/customers',upload.single('image'), (req,res) => {
             console.log(err);
         }
     );
+})
+
+app.delete('/api/customers/:id', (req, res) => {
+    let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?';
+    let params = [req.params.id];
+    connection.query(sql, params,
+        (err, rows, fields) => {
+            res.send(rows);
+        }
+    )
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}`));//실제로 app을 실행시키기위해서 5000port로 동작시키고 서버가 동작중이면 동작중이라고 표시하게해줌
